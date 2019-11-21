@@ -1,0 +1,51 @@
+{
+  "id": "1518943",
+  "name": "vue",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "693661",
+      "name": "角色管理",
+      "font_class": "jiaoseguanli",
+      "unicode": "e66c",
+      "unicode_decimal": 58988
+    },
+    {
+      "icon_id": "1279036",
+      "name": "质量",
+      "font_class": "zhiliang",
+      "unicode": "e61c",
+      "unicode_decimal": 58908
+    },
+    {
+      "icon_id": "2492551",
+      "name": "组织",
+      "font_class": "fl-zuzhi",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "4638879",
+      "name": "质量检查",
+      "font_class": "quality",
+      "unicode": "e889",
+      "unicode_decimal": 59529
+    },
+    {
+      "icon_id": "5387524",
+      "name": "层级",
+      "font_class": "cengji",
+      "unicode": "eaf2",
+      "unicode_decimal": 60146
+    },
+    {
+      "icon_id": "9448531",
+      "name": "层级",
+      "font_class": "cengji1",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    }
+  ]
+}
