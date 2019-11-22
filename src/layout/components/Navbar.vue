@@ -3,7 +3,6 @@
     <div id="header" class="clearfix no-print" :class="{fixed:istabBar}">
       <div class="fl logo">
         <!-- <img src="../../assets/imgs/favicon.png" alt /> -->
-        <!-- 河北省高级人民法院电子卷宗管理平台 -->
         管理平台
       </div>
       <div class="fl logoicon"></div>
