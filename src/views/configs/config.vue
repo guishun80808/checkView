@@ -28,7 +28,7 @@
               stripe
               @current-change="tableChange"
               style="width: 100%;text-align: center;"
-              height="550"
+              height="593"
             >
               <el-table-column type="index" width="50" align="center"></el-table-column>
               <el-table-column property="propertyName" width label="配置名称" align="center"></el-table-column>
@@ -53,7 +53,7 @@
                   ></div>
                 </template>
               </el-table-column>
-              <el-table-column property="createUserId" width="80" label="操作人" align="center"></el-table-column>
+              <el-table-column property="userName" width="80" label="创建人" align="center"></el-table-column>
               <el-table-column label="操作" prop align="center" width="285">
                 <template slot-scope="scope">
                   <el-button
@@ -269,7 +269,7 @@ export default {
     },
     //新增配置
     onAddUser(){
-        this.diaTitle = "添加新规则";
+        this.diaTitle = "新增配置";
         this.dialogFormVisible = true;
         this.formParams={
         createUserId: this.userInfo.userId,
@@ -313,7 +313,7 @@ export default {
           });
           return;
       }
-      if(this.diaTitle=="编辑规则"){
+      if(this.diaTitle=="编辑配置"){
         // this.formParams.createTime=(new Date()).getTime();
         this.editProp(this.formParams)
       }else{
@@ -321,8 +321,8 @@ export default {
       }
     },
     onEditCofig(inde,row){
-        console.log(row);
-        this.diaTitle = "编辑规则";
+        // console.log(row);
+        this.diaTitle = "编辑配置";
         this.dialogFormVisible = true;
         this.formParams.propertyId=row.propertyId
         this.formParams.createUserId=row.createUserId
@@ -356,7 +356,7 @@ export default {
         }).catch(() => {
             this.$message({
                 type: 'info',
-                message: '删除失败'
+                message: '已取消删除'
             }); 
         });
     },
@@ -509,6 +509,8 @@ export default {
   }
 .el-input__inner{
   height:40px;
+  background: transparent;
+  border-color: #4295cb;
 }
 .el-table--enable-row-hover .el-table__body tr:hover > td {
   background: #0c1f7f !important;
@@ -518,5 +520,10 @@ export default {
   background: transparent;
   border: 1px solid #2c69ff;
   color: #fff;
+}
+.pageRow{
+  /* margin-top:20px; */
+  position: absolute;
+  bottom: 30px;
 }
 </style>

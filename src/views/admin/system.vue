@@ -1,5 +1,5 @@
 <template>
-  <div id="hierarchy">
+  <div id="system">
     <el-row
       :gutter="10"
       style="margin:0;background: rgb(8,45,111);padding-bottom:20px;padding:20px"
@@ -27,10 +27,10 @@
               </el-select>
             </el-form-item>
             <el-form-item label=" 审判程序：">
-              <el-select v-model="params.spcxId" placeholder="请选择" class="search_select">
+              <el-select v-model="params.spcxId" clearable placeholder="请选择" class="search_select">
                 <el-option
                   v-for="item in spcxList"
-                  clearable
+                  
                   :key="item.spcxId"
                   :label="item.spcxName"
                   :value="item.spcxId"
@@ -40,6 +40,7 @@
             <el-form-item label="案件阶段：">
               <el-select
                 v-model="params.caseStatus"
+                clearable
                 placeholder="请选择"
                 class="search_select"
                 
@@ -60,14 +61,15 @@
         </div>
       </el-col>
     </el-row>
-    <div class="content">
+    <!-- <div class="content"> -->
+    <div class="">
       <el-table
               ref="singleTable"
               :data="CaseCheckInfo"
               stripe
               @current-change="handleTableChange"
               style="width: 100%;text-align: center;"
-              height="550"
+              height="593"
             >
               <el-table-column type="index" width="50" align="center"></el-table-column>
               <el-table-column property="caseTypeName" width label="案件类型" align="center"></el-table-column>
@@ -100,7 +102,6 @@
                 </template>
               </el-table-column>
             </el-table>
-      <!-- <div class="line"></div> -->
     </div>
      <!-- 分页 -->
       <el-row class="pageRow">
@@ -163,6 +164,7 @@
           </el-form-item>
           <el-form-item label="目录：">
               <treeselect
+                class="content"
                 placeholder="请选择"
                 :options="directoryList"
                 :disable-branch-nodes="true"
@@ -534,7 +536,7 @@ export default {
     },
     //新增用户
     onAddUser(){
-      this.diaTitle = "添加新规则";
+      this.diaTitle = "添加目录规则";
       this.dialogFormVisible = true;
       var arr=this.formParams;
       this.formParams={
@@ -559,14 +561,14 @@ export default {
       this.formParams.description = "";
     },
     save() {
-      if(this.diaTitle == "编辑规则"){
+      if(this.diaTitle == "编辑目录规则"){
         this.editCaseCheckInfo(this.formParams);
       }else{
         this.addCaseCheckInfo(this.formParams);
       }
     },
     onEditSystem(index,row){
-      this.diaTitle = "编辑规则";
+      this.diaTitle = "编辑目录规则";
       this.dialogFormVisible = true;
       this.formParams=row;
       var spcxParms={
@@ -593,7 +595,7 @@ export default {
         }).catch(() => {
             this.$message({
                 type: 'info',
-                message: '删除失败'
+                message: '已取消删除'
             }); 
         });
       
@@ -605,7 +607,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-#hierarchy {
+#system {
   padding: 0px;
   padding-left: 0;
   height: 870px;
@@ -659,11 +661,11 @@ export default {
     }
   }
   .content {
-    position: relative;
-    margin-top: 0px;
-    padding-top: 10px;
-     overflow: hidden;
-    padding: 20px;
+    // position: relative;
+    // margin-top: 0px;
+    // padding-top: 10px;
+    // overflow: hidden;
+    // padding: 20px;
     .line {
       height: 1px;
       background: #061b54;
@@ -761,4 +763,26 @@ export default {
  .vue-treeselect__single-value{
    color:#fff;
  }
+ #system .pageRow{
+  /* margin-top:40px; */
+    position: absolute;
+    bottom: 30px;
+}
+.vue-treeselect__menu,.vue-treeselect__option--highlight{
+  background-color: rgb(14, 50, 116);
+  color: #fff;
+}
+.vue-treeselect--single .vue-treeselect__option--selected{
+  background: #113e8c;
+  color: #ffb400;
+}
+.vue-treeselect--single .vue-treeselect__option--selected:hover{
+  background: #0c1f7f
+}
+
+.vue-treeselect__menu ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: #fff;
+}
 </style>

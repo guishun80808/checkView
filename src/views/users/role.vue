@@ -270,11 +270,39 @@ export default {
       this.formParams.description = "";
     },
     save() {
+      if(!this.formParams.roleName){
+        this.$message({
+          message: " 角色名不能为空",
+          type: "error"
+        });
+        return
+      }
+      if(this.formParams.menuIds.length<1){
+        this.$message({
+          message: " 角色权限不能为空",
+          type: "error"
+        });
+        return
+      }
+      if(!this.formParams.roleDesc){
+        this.$message({
+          message: " 角色描述不能为空",
+          type: "error"
+        });
+        return
+      }
+      if(!this.formParams.rolePermissionDesc){
+        this.$message({
+          message: " 权限描述不能为空",
+          type: "error"
+        });
+        return
+      }
       // this.formParams.roleIds=this.formParams.roleIdsArr.join(',');
       this.dialogFormVisible = false;
       if (this.diaTitle == "新增角色信息") {
         this.addRole(this.formParams);
-      } else if (this.diaTitle == "编辑用户信息") {
+      } else if (this.diaTitle == "编辑角色信息") {
         this.editRole(this.formParams);
       }
     },
@@ -293,7 +321,7 @@ export default {
     },
     //编辑用户
     onEditUser(index,row){
-        this.diaTitle = "编辑用户信息";
+        this.diaTitle = "编辑角色信息";
         // this.isDisabled=true;
         console.log(row);
         this.dialogFormVisible = true;

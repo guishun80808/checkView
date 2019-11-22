@@ -1,5 +1,5 @@
 <template>
-  <div class="zj_jg">
+  <div class="zj_jg" ref="zjJg">
     <!-- <el-row>
       <el-col :span="7">
         <div class="grid-content bg-purple">所属单位：</div>
@@ -35,14 +35,17 @@
         <div class="">所属部门列表：</div>
         <div class="content">
           <!-- highlight-current-row -->
-          <el-table ref="singleTable" :data="courtRoomList" stripe v-if="this.courtRoomList.length>0"  @current-change="handleCurrentChange" style="width: 100%"  height="800">
+          <el-table ref="singleTable" :data="courtRoomList" stripe v-if="this.courtRoomList.length>0"  
+              @current-change="handleCurrentChange"
+              highlight-current-row 
+              style="width: 100%"  height="800">
              <el-table-column type="index" width="50" align="center"></el-table-column>
             <el-table-column prop="courtRoomName" label="部门名称" width align="center"></el-table-column>
             <el-table-column prop="userNum" label="部门人数" width="80" align="center"></el-table-column>
           </el-table>
         </div>
     </div>
-    <div class="userNum tabs">
+    <div class="userNum tabs" ref="userNum" >
         <div class="">所属用户：</div>
         <ol class="userList content">
           <li v-for="item in userList">{{item.userFullName}}</li>
@@ -75,6 +78,14 @@ export default {
   computed: {...mapGetters(["userInfo"]),},
   created() {},
   mounted() {
+    var zjjgWidth=this.$refs.zjJg.offsetWidth;
+    var tabsDiv=this.$refs.userNum.offsetWidth
+    this.$refs.userNum.style.width=zjjgWidth-tabsDiv*2+"px";
+    var userNumDiv=this.$refs.userNum.style.width
+    var width=userNumDiv.substring(0,3)-0
+    if(width>tabsDiv){
+      this.$refs.userNum.style.width=zjjgWidth-(tabsDiv)*2-100+"px";
+    }
     var courtIdParms={
         courtId: this.userInfo.courtId
     }
@@ -94,12 +105,14 @@ export default {
     },
     //选择庭室
     handleCurrentChange(row){
-      console.log(row);
+      if(row){
       var params={
         courtId: row.courtId,
         courtRoomId:row.courtRoomId,
       }
       this.userCourRoomById(params)
+      }
+      
 
     },
     //所有法院列表
@@ -182,8 +195,10 @@ export default {
     padding:5px;
     list-style: decimal;
   } 
+  
 </style>
 <style lang="css">
+
 .app-main{
     background: #061b54;
   }
@@ -198,5 +213,10 @@ export default {
   .el-table--enable-row-hover .el-table__body tr:hover > td {
     background: #0c1f7f !important;
     cursor: pointer;
-}
+  }
+  
+  .is-current>.el-tree-node__content,.el-table--striped .el-table__body tr.el-table__row--striped.current-row td,.el-table__body tr.current-row>td{
+    background: #061b54;
+    color: #ffb400;
+  }
 </style>

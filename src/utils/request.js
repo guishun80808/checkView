@@ -72,11 +72,24 @@ service.interceptors.response.use(
     }
     else if (res.code == "2747") {
       Message({
-        message: "未查询到案件信息",
+        message: "未查询到目录规则信息",
         type: 'warning',
         duration: 3 * 1000
       })
-    } else {
+    } 
+    else if (res.code == "2401") {
+      Message({
+        message: "未查询到该用户信息",
+        type: 'warning',
+        duration: 3 * 1000
+      })
+    }else if (res.code == "2105") {
+      Message({
+        message: "未查询到该配置信息",
+        type: 'warning',
+        duration: 3 * 1000
+      })
+    }else {
       Message({
         message: res.message || 'Error',
         type: 'error',

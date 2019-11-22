@@ -14,7 +14,7 @@
         
       </el-menu>
     </div>
-      <div class="line"></div>
+      <!-- <div class="line"></div> -->
     <router-view @changeData="changeData"></router-view>
   </div>
 </template>

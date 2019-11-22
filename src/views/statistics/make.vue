@@ -104,7 +104,7 @@
           <el-button type="warning" round @click="toggleEcharts">{{toggleTitle}}</el-button>
           <el-button type="warning" round @click="exportExcel">导出</el-button>
           <!-- <el-button type="info" round v-print="'#printTest'">打印</el-button> -->
-           <el-button type="info" round @click="printContent">打印</el-button>
+          <el-button type="info" round @click="printContent">打印</el-button>
         </div>
       </div>
       <el-table
@@ -448,7 +448,8 @@ export default {
     },
     //打印页面内容
     printContent() {
-      const style = "@page { margin: 0 } @media *{text-align:center} print { text-align:center} table{text-align:center}"; //自定义样式
+      const style =
+        "@page { margin: 0 } @media *{text-align:center} print { text-align:center} table{text-align:center}"; //自定义样式
       Print({
         printable: "printTest",
         type: "html",
@@ -626,6 +627,7 @@ export default {
     },
     async selCourt(id) {
       this.params.cbrIdStrings = "";
+      this.params.courtRoomIdStrings = "";
       this.cbrList = [];
       if (typeof id == "string") {
         this.selAreaFlag = false;
@@ -650,11 +652,11 @@ export default {
         this.courtRoomList.forEach(element => {
           ids.push(element.courtRoomId);
         });
-        this.params.courtRoomIdStrings = ids.join("-");
         this.courtRoomList.unshift({
           courtRoomId: ids.join("-"),
           courtRoomName: "全部庭室"
         });
+        this.params.courtRoomIdStrings = ids.join("-");
       } catch (err) {
         console.log(err);
         // this.$message({
@@ -664,6 +666,7 @@ export default {
       }
     },
     async selRoom(id) {
+      this.params.cbrIdStrings = "";
       this.cbrList = [];
       if (typeof id == "string") {
         this.params.cbrIdStrings = "";
@@ -688,7 +691,7 @@ export default {
             message: "该庭室下暂无法官信息",
             type: "warning"
           });
-          this.params.cbrIdStrings = "";
+          this.params.cbrIdStrings = ""; 
           return;
         }
         this.cbrList = data;
@@ -700,11 +703,11 @@ export default {
             this.cbrList.splice(index, 1);
           }
         });
-        this.params.cbrIdStrings = ids.join("-");
         this.cbrList.unshift({
           userCode: ids.join("-"),
           userFullName: "全部法官"
         });
+        this.params.cbrIdStrings = ids.join("-");
       } catch (err) {
         console.log(err);
         this.$message({

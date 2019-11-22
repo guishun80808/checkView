@@ -42,21 +42,24 @@
                         ></el-option>
                       </el-select>
                     </el-form-item>
-                <el-form-item label="角色：">
-                    <el-select
-                    v-model="searchParms.roleIds"
-                    clearable
-                    placeholder="请选择"
-                    class="search_select"
-                    >
-                    <el-option
-                        v-for="item in allRoleList"
-                        :key="item.roleId"
-                        :label="item.roleName"
-                        :value="item.roleId"
-                    ></el-option>
-                    </el-select>
-                </el-form-item>
+                    <el-form-item label="角色：">
+                        <el-select
+                        v-model="searchParms.roleIds"
+                        clearable
+                        placeholder="请选择"
+                        class="search_select"
+                        >
+                        <el-option
+                            v-for="item in allRoleList"
+                            :key="item.roleId"
+                            :label="item.roleName"
+                            :value="item.roleId"
+                        ></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="用户名：">
+                      <el-input v-model="searchParms.userName" placeholder="请输入" class="search_input"></el-input>
+                    </el-form-item>
                 <el-form-item>
                     <el-button type="primary" icon="el-icon-search" @click="onSearch" v-preventReClick="1000">搜索</el-button>
                     <el-button type="primary" icon="el-icon-plus"   @click="onAddUser">新增</el-button>
@@ -79,7 +82,7 @@
               stripe
               @current-change="handleCurrentChange"
               style="width: 100%;text-align: center;"
-              height="550"
+              height="593"
             >
               <el-table-column type="index" width="50" align="center"></el-table-column>
               <el-table-column property="userName" width label="用户名" align="center"></el-table-column>
@@ -141,14 +144,15 @@
           </el-form-item> -->
           <el-form-item label="归属法院：">
             <treeselect
+              class="content"
               placeholder="请选择"
               :options="allCourtListTree"
               :show-count="true"
               v-model="formParams.courtId"
               :normalizer="normalizer"
                @select="dialogCourtChange"
+               :always-open="alwaysOpen"
               />
-
           </el-form-item>
           <el-form-item label="庭室名称：" >
             <!-- <el-input v-model="formParams.description" placeholder="请输入" class="search_input"></el-input> -->
@@ -165,7 +169,7 @@
             <el-input v-model="formParams.userName" :disabled="isDisabled" placeholder="请输入" class="search_input"></el-input>
           </el-form-item>
           <el-form-item label="用户密码：" v-if="this.diaTitle=='编辑用户信息'">
-            <el-input v-model="formParams.userPassword" placeholder="请输入" class="search_input"></el-input>
+            <el-input v-model="formParams.userPassword" type="password" placeholder="请输入" class="search_input"></el-input>
           </el-form-item>
           <el-form-item label="姓名：">
             <el-input v-model="formParams.userFullName" placeholder="请输入" class="search_input"></el-input>
@@ -201,6 +205,7 @@ export default {
   props: {},
   data() {
     return {
+      alwaysOpen: false,
       isDisabled:false,
       addCourtRoomName:"",
       allCourtList: [],
@@ -213,6 +218,7 @@ export default {
       searchParms: {
         courtId:"",
         courtRoomId:"",
+        userName:"",
         currentPage: 1,
         pageSize: 30
       },
@@ -293,6 +299,11 @@ export default {
           this.total = response.total;
         })
         .catch(() => {
+          this.allUserList=[];
+          // this.$message({
+          //   message: "没有查询到该用户",
+          //   type: "error"
+          // });
         });
     },
     //所有法院列表
@@ -365,6 +376,7 @@ export default {
     //新增用户
     onAddUser(){
         this.diaTitle = "新增用户信息";
+        this.isDisabled=false;
         this.dialogFormVisible = true;
         this.formParams.courtId=null;
         this.formParams.courtRoomId=null;
@@ -656,5 +668,22 @@ export default {
  .el-table::before{
    /* height:0px; */
  }
+.pageRow{
+  /* margin-top:10px; */
+    position: absolute;
+    bottom: 30px;
+}
+.vue-treeselect__menu,.vue-treeselect__option--highlight{
+  background-color: rgb(14, 50, 116);
+  color: #fff;
+}
+.vue-treeselect--single .vue-treeselect__option--selected{
+  background: #113e8c;
+  color: #ffb400;
+}
+.vue-treeselect--single .vue-treeselect__option--selected:hover{
+  background: #0c1f7f
+}
+
 
 </style>

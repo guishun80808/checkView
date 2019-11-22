@@ -25,6 +25,16 @@
                 ></el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="地区：" v-if="areaShowFlag">
+              <el-select v-model="areaId" placeholder="请选择" class="search_select" @change="selArea">
+                <el-option
+                  v-for="item in allAreaList"
+                  :key="item.courtId"
+                  :label="item.courtAreaName"
+                  :value="item.courtId"
+                ></el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="法院：" v-if="courtShowFlag">
               <el-select
                 v-model="params.courtId"
@@ -368,7 +378,7 @@ export default {
         caseStatus: "",
         checkCaseResult: "",
         caseName: "",
-        queryAreaFlag: false,
+        queryAreaFlag: true,
         checkCaseMessageFlag: true,
         laDateStart: "2017-01-01",
         laDateEnd: parseTime(new Date(), "{y}-{m}-{d}"),
@@ -393,7 +403,10 @@ export default {
       courtIds: "",
       startStr: new Date("2017-01-01").getTime() / 1000,
       endStr: new Date().getTime() / 1000,
+      allAreaList: [],
+      areaId: "",
       searchFlag: true,
+      areaShowFlag: false,
       courtShowFlag: false,
       roomShowFlag: false,
       cbrShowFlag: false
@@ -403,11 +416,22 @@ export default {
     ...mapGetters(["token", "userInfo"])
   },
   created() {
+    this.getAllArea();
     let params = sessionStorage.getItem("params");
     params = JSON.parse(params);
+    let checkRes = sessionStorage.getItem("checkRes");
+    checkRes = JSON.parse(checkRes);
+    console.log(checkRes)
     if (params) {
+      if (!params.queryAreaFlag) {
+        // this.areaShowFlag = false;
+      }
+      // this.searchFlag = false;
+      this.areaId = params.courtId;
+      this.getAllCourtList(this.areaId);
       if (params.shijiao == 1) {
         this.params = params;
+        this.params.uploadFileFlag = 1;
         this.params.queryAreaFlag = false;
       } else if (params.shijiao == 2) {
         this.params = params;
@@ -416,11 +440,27 @@ export default {
       } else if (params.shijiao == 4) {
         this.params = params;
       }
+    } else if (checkRes) {
+      if (!checkRes.queryAreaFlag) {
+        // this.areaShowFlag = false;
+      }
+      this.areaId = checkRes.courtId;
+      this.params = checkRes;
+      this.params.uploadFileFlag = 1;
+      this.getAllCourtList(this.areaId);
+      // this.searchFlag = false;
     }
+    this.timeStr = this.params.laDateStart + this.params.laDateEnd;
     this.getAllCaseType();
-    this.getAllCourtList();
     this.getCaseStatistics();
-    this.getCourtRoomList(this.user.courtId);
+    this.getCourtRoomList(this.params.courtId);
+    if (this.params.courtRoomId !== "") {
+      this.getAllCbrList(this.params.courtRoomId);
+    }
+
+    if (this.params.cbrId !== "") {
+      this.selCbr(this.params.cbrId);
+    }
     this.msg.courtName = this.user.courtName;
     this.msgClone.courtName = this.user.courtName;
   },
@@ -430,6 +470,23 @@ export default {
   },
   watch: {},
   methods: {
+    async getAllArea() {
+      try {
+        const { data } = await getAllArea();
+        this.allAreaList = data;
+      } catch (err) {
+        console.log(err);
+        this.$message({
+          message: "查询地区列表失败",
+          type: "warning"
+        });
+      }
+    },
+    async selArea(id) {
+      this.params.courtId = id;
+      this.params.queryAreaFlag = true;
+      this.getAllCourtList(id);
+    },
     async savePostil(row) {
       try {
         const { code } = await postilCase(this.postilParam);
@@ -490,10 +547,26 @@ export default {
       this.failMsg = row.failReason;
       this.checkDialog = true;
     },
-    async getAllCourtList() {
+    // async getAllCourtList() {
+    //   try {
+    //     const { data } = await getAllCourtList();
+    //     this.courtList = data;
+    //   } catch (err) {}
+    // },
+    async getAllCourtList(id) {
       try {
-        const { data } = await getAllCourtList();
-        this.courtList = data;
+        const { data } = await getCourtList({ courtId: id });
+        this.courtList = data.children;
+        this.courtList.unshift(data);
+      } catch (err) {}
+    },
+    async getAllCbrList(id) {
+      try {
+        const { data } = await getCbrsByRoomId({
+          courtId: this.params.courtId,
+          courtRoomId: id
+        });
+        this.cbrList = data;
       } catch (err) {}
     },
     handleSizeChange(val) {
@@ -740,9 +813,11 @@ export default {
       } catch (err) {}
     },
     async selCourt(id) {
+      this.params.queryAreaFlag = false;
       this.msg.roomName = "";
       this.msg.cbrName = "";
       this.params.cbrId = "";
+      this.params.courtRoomId = "";
       this.cbrList = [];
       this.courtRoomList = [];
       this.params.courtId = id;
@@ -757,6 +832,7 @@ export default {
     },
     async selRoom(id) {
       this.msg.cbrName = "";
+      this.params.cbrId = "";
       this.cbrList = [];
       if (id === "") {
         return;
@@ -817,16 +893,23 @@ export default {
       } else if (t == "object") {
         this.user = this.token;
       }
-      this.params.courtId = this.user.courtId;
-
       if (this.searchFlag) {
         if (this.userInfo.roleMenus[0] == 1) {
           this.areaShowFlag = true;
           this.courtShowFlag = true;
           this.roomShowFlag = true;
           this.cbrShowFlag = true;
+          if (!sessionStorage.getItem("checkRes")) {
+            this.params.courtId = this.userInfo.courtId;
+            this.areaId = this.userInfo.courtId;
+            this.getAllCourtList(this.areaId);
+          }
         } else if (this.userInfo.roleMenus[0] == 2) {
-          this.params.courtId = this.userInfo.courtId;
+          if (!sessionStorage.getItem("checkRes")) {
+            this.params.courtId = this.userInfo.courtId;
+            this.areaId = this.userInfo.courtId;
+            this.getAllCourtList(this.areaId);
+          }
           // this.courtShowFlag = true;
           this.roomShowFlag = true;
           this.cbrShowFlag = true;
@@ -848,6 +931,7 @@ export default {
               courtRoomId: ids.join("-"),
               courtRoomName: "全部庭室"
             });
+
             this.getMsgCourt(this.userInfo.courtId);
           } catch (err) {
             console.log(err);
@@ -859,8 +943,11 @@ export default {
         } else if (this.userInfo.roleMenus[0] == 3) {
           // this.roomShowFlag = true;
           this.cbrShowFlag = true;
-          this.params.courtId = this.userInfo.courtId;
-          this.params.courtRoomId = this.userInfo.courtRoomId;
+          if (!sessionStorage.getItem("checkRes")) {
+            this.params.courtId = this.userInfo.courtId;
+            this.params.courtRoomId = this.userInfo.courtRoomId;
+          }
+
           // console.log(this.params);
           let ids = [];
           this.params.queryAreaFlag = false;
@@ -885,8 +972,11 @@ export default {
                 this.cbrList.splice(index, 1);
               }
             });
-            this.params.courtId = this.userInfo.courtId;
-            this.params.courtRoomId = this.userInfo.courtRoomId;
+            if (!sessionStorage.getItem("checkRes")) {
+              this.params.courtId = this.userInfo.courtId;
+              this.params.courtRoomId = this.userInfo.courtRoomId;
+            }
+
             this.cbrList.unshift({
               userCode: ids.join("-"),
               userFullName: "全部法官"
@@ -914,6 +1004,8 @@ export default {
         if (this.params.shijiao) {
           delete this.params.shijiao;
         }
+        console.log(this.params);
+        // debugger;
         const { data, total } = await getFailCaseList(this.params);
         this.tableData = data;
         this.total = total;
@@ -921,6 +1013,9 @@ export default {
         this.msgClone.courtName = this.msg.courtName;
         this.msgClone.roomName = this.msg.roomName;
         this.msgClone.cbrName = this.msg.cbrName;
+        if (!this.params.queryAreaFlag) {
+          // this.areaShowFlag = false;
+        }
       } catch (err) {
         console.log(err);
         this.$message({
@@ -1170,7 +1265,15 @@ export default {
   color: #fff;
   font-size: 14px;
 }
-
+#mass .el-button--text {
+  color: #fff;
+  background-color: #409eff;
+  border-color: #409eff;
+}
+#mass .el-button--small,
+.el-button--small.is-round {
+  padding: 3px 3px;
+}
 #mass .el-pagination {
   color: #fff;
 }

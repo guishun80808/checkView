@@ -44,6 +44,7 @@ export default {
     handleOpen(key, keyPath) {
       if (window.location.href.split("/quality")[1] != "/mass") {
         sessionStorage.removeItem("params");
+        sessionStorage.removeItem("checkRes");
       }
       this.$router.push({
         path: key

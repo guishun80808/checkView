@@ -265,6 +265,22 @@ import { mapGetters } from "vuex";
 export default {
   data() {
     return {
+      failCaseListParam: {
+        courtId: "",
+        courtRoomId: "",
+        cbrId: "",
+        caseTypeId: "",
+        spcxId: "",
+        caseStatus: "",
+        checkCaseResult: 1,
+        caseName: "",
+        queryAreaFlag: true,
+        checkCaseMessageFlag: true,
+        laDateStart: "2017-01-01",
+        laDateEnd: parseTime(new Date(), "{y}-{m}-{d}"),
+        currentPage: 1,
+        pageSize: 20
+      },
       iintheight: 520,
       dialogVisible: false,
       msg: {
@@ -418,7 +434,24 @@ export default {
     },
     tagClick(row) {
       let checkRes = this.failCaseListParam;
-      checkRes.result = 1;
+      checkRes.laDateStart = this.params.laDateStart;
+      checkRes.laDateEnd = this.params.laDateEnd;
+      if (this.params.queryFlag === "") {
+        checkRes.courtId = row.areaId;
+        checkRes.queryAreaFlag = true;
+      } else if (this.params.queryFlag === 0) {
+        checkRes.courtId = row.courtId;
+        checkRes.queryAreaFlag = false;
+      } else if (this.params.queryFlag === 1) {
+        checkRes.courtId = row.courtId;
+        checkRes.courtRoomId = row.courtRoomId;
+        checkRes.queryAreaFlag = false;
+      } else if (this.params.queryFlag === 2) {
+        checkRes.courtId = row.courtId;
+        checkRes.courtRoomId = row.courtRoomId;
+        checkRes.cbrId = row.cbrId;
+        checkRes.queryAreaFlag = false;
+      }
       checkRes = JSON.stringify(checkRes);
       sessionStorage.setItem("checkRes", checkRes);
       this.$router.push({
@@ -426,21 +459,26 @@ export default {
       });
     },
     async areaClick(row) {
+      this.searchFlag = false;
       this.areaId = row.areaId;
       await this.selArea(row.areaId);
       // this.params.courtId = row.areaId;
       this.getCaseStatistics();
     },
     async courtClick(row) {
+      this.searchFlag = false;
       await this.selCourt(row.courtId);
       this.getCaseStatistics();
     },
     async roomClick(row) {
+      this.searchFlag = false;
+      this.params.courtRoomIdStrings = row.courtRoomId;
       await this.selRoom(row.courtRoomId);
       this.params.courtRoomId = row.courtRoomId;
       this.getCaseStatistics();
     },
     async cbrClick(row) {
+      this.searchFlag = false;
       // await this.selCbr(row.cbrId);
       // this.getCaseStatistics();
       console.log(row);

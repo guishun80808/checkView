@@ -50,19 +50,23 @@
           <ul>
             <li class="fl">
               <span></span>
-              <span>{{totalMsg.totalCaseCount}}</span>
+              <!-- <span  class="dom-attribute2">{{totalMsg.totalCaseCount}}</span> -->
+              <span class="dom-attribute1"></span>
             </li>
             <li class="fl">
               <span></span>
-              <span>{{totalMsg.totalUploadCaseCount}}</span>
+              <!-- <span  class="dom-attribute2">{{totalMsg.totalUploadCaseCount}}</span> -->
+              <span class="dom-attribute2"></span>
             </li>
             <li class="fl">
               <span></span>
-              <span>{{totalMsg.totalUnPassCaseCount}}</span>
+              <!-- <span class="dom-attribute3">{{totalMsg.totalUnPassCaseCount}}</span> -->
+              <span class="dom-attribute3"></span>
             </li>
             <li class="fl">
               <span></span>
-              <span>{{totalMsg.totalUnPassCaseCount||"待统计"}}</span>
+              <!-- <span class="dom-attribute4">{{totalMsg.totalUnPassCaseCount||"待统计"}}</span> -->
+              <span class="dom-attribute4"></span>
             </li>
           </ul>
         </div>
@@ -225,6 +229,7 @@
 </template>
 
 <script>
+import anime from "animejs/lib/anime.es.js";
 import { mapGetters } from "vuex";
 import html2canvas from "html2canvas";
 import {
@@ -397,6 +402,63 @@ export default {
   },
   watch: {},
   methods: {
+     anime() {
+      var objPropLogEl = document.querySelector(".dom-attribute1");
+      var objPropLogE2 = document.querySelector(".dom-attribute2");
+      var objPropLogE3 = document.querySelector(".dom-attribute3");
+      var objPropLogE4 = document.querySelector(".dom-attribute4");
+      var myObject = {
+        prop1: 0
+      };
+      anime({
+        targets: myObject,
+        prop1: this.totalMsg.totalCaseCount,
+        // prop1: 10000,
+        easing: "linear",     
+        round: 1,
+        update: function() {
+          objPropLogEl.innerHTML = JSON.stringify(myObject)
+            .split(":")[1]
+            .split("}")[0];
+        }
+      });
+      anime({
+        targets: myObject,
+        prop1: this.totalMsg.totalUploadCaseCount,
+        // prop1: 10000,
+        easing: "linear",
+        round: 1,
+        update: function() {
+          objPropLogE2.innerHTML = JSON.stringify(myObject)
+            .split(":")[1]
+            .split("}")[0];
+        }
+      });
+      anime({
+        targets: myObject,
+        prop1: this.totalMsg.totalUnPassCaseCount,
+        // prop1: 10000,
+        easing: "linear",
+        round: 1,
+        update: function() {
+          objPropLogE3.innerHTML = JSON.stringify(myObject)
+            .split(":")[1]
+            .split("}")[0];
+        }
+      });
+      anime({
+        targets: myObject,
+        prop1: this.totalMsg.totalUnPassCaseCount,
+        // prop1: 10000,
+        easing: "linear",
+        round: 1,
+        update: function() {
+          objPropLogE4.innerHTML = JSON.stringify(myObject)
+            .split(":")[1]
+            .split("}")[0];
+        }
+      });
+    },
      dataURLToBlob(dataurl) {
       //ie 图片转格式
       var arr = dataurl.split(","),
@@ -755,6 +817,7 @@ export default {
         xcDrawChart4(self.xcChart4Datas);
         xcDrawChart5(self.xcChart5Datas);
         this.getHgTop10();
+        this.anime();
       } catch (err) {
         console.log(err);
         this.$message({
